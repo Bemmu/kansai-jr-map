@@ -1,0 +1,98 @@
+<html>
+<head>
+<script src="stop_locations.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+</head>
+<body>
+
+<div style="position:relative">
+	<div id="labels" style="position:absolute;left:0;top:0;"></div>
+	<canvas id="c" width="1040" height="737" style="width:1040px;height:737px;border:solid 1px #cccccc;"/>
+</div>
+
+<script>
+
+function addLabel(x, y, text) {
+	$('#labels').append(
+		'<span style="font-size:10px;position:absolute;left:' + x + 'px;top:' + y + 'px;width:300px;">' + text + '</span>'
+	);
+}
+
+function line(ctx, x, y) {
+	ctx.lineWidth = 15;
+	ctx.lineCap = "round";
+	ctx.beginPath();
+	ctx.moveTo(x,y);
+	ctx.lineTo(x+1,y+1);
+	ctx.stroke();
+}
+
+// Inside Tokyo area map, longitude is like the X coordinate and
+// latitude is like reverse Y coordinate. Map these to 'x' and 'y'
+// for stop locations.
+function latlng_to_xy() {
+	for (var i in stop_locations) {
+		if (!stop_locations.hasOwnProperty(i)) continue;
+		stop_locations[i].x = stop_locations[i][0];
+		stop_locations[i].y = -stop_locations[i][1];
+	}
+}
+
+// Returns upper left and lower right corners of a box that would
+// contain all the stations inside.
+function find_extents(xy_stops) {
+	var minX, maxX, minY, maxY;
+	minX = maxX = xy_stops['Ogikubo'].x;
+	minY = maxY = xy_stops['Ogikubo'].y;
+	for (var i in xy_stops) {
+		if (!xy_stops.hasOwnProperty(i)) continue;
+		if (xy_stops[i].x < minX) minX = xy_stops[i].x;
+		if (xy_stops[i].x > maxX) maxX = xy_stops[i].x;
+		if (xy_stops[i].y < minY) minY = xy_stops[i].y;
+		if (xy_stops[i].y > maxY) maxY = xy_stops[i].y;
+	}
+	return [minX, minY, maxX, maxY];
+}
+
+// Returns scale, tx and ty such that the stop x y values are inside canvas.
+function compute_scale_and_translation(extents, xy_stops) {
+	var tx = -extents[0], ty = -extents[1];
+	
+	tx -= 0.34;
+	ty -= 0.24;
+	
+	return [2850, tx, ty];
+	
+/*	extents[0] -= tx; extents[1] -= ty;
+	extents[2] -= tx; extents[3] -= ty;
+*/	
+}
+
+function scale_and_translate_stops(xy_stops) {
+	var st = compute_scale_and_translation(find_extents(xy_stops), xy_stops);
+	var scale = st[0], tx = st[1], ty = st[2];
+	for (var i in xy_stops) {
+		if (!xy_stops.hasOwnProperty(i)) continue;
+		xy_stops[i].x = (xy_stops[i].x + tx) * scale;
+		xy_stops[i].y = (xy_stops[i].y + ty) * scale;
+	}
+	return xy_stops;
+}
+
+function show_stops(xy_stops) {
+	var ctx = document.getElementById("c").getContext('2d');
+	var stops = scale_and_translate_stops(xy_stops);
+	for (var stopname in stops) {
+		var stop = stops[stopname];
+		if (!stops.hasOwnProperty(stopname)) continue;
+		addLabel(stop.x, stop.y, stopname);
+		line(ctx, stop.x, stop.y);
+	}
+}
+
+latlng_to_xy();
+show_stops(stop_locations);
+
+</script>
+</body>
+</html>

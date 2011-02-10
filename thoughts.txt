@@ -2,3 +2,8 @@ Just curious to see how much work it is to get the data that would allow
 this map to be created:
 
 http://speedymole.com/Tubes/Tokyo/tokyo-subway-map.gif
+
+First have a list of stops of each line. Lines might branch or loop,
+so all that the stop list means is that if stops come after each
+other (with no empty line in between), then they are connected by
+that line.
