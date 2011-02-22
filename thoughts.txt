@@ -7,3 +7,19 @@ First have a list of stops of each line. Lines might branch or loop,
 so all that the stop list means is that if stops come after each
 other (with no empty line in between), then they are connected by
 that line.
+
+---
+
+Actual metro map is not very much like reality at all. Metro map is
+more a visualization of the graph rather than a location mapping of it.
+All angles are always 45 degrees, even though in reality they can be
+anything. Sometimes directions are radically different to get the map
+to fit properly. Spaces between stations tend to be equal, even though
+in reality they change.
+
+Stations seem to have some kind of arbitrary importance to them. Tokyo
+station is more visible in the metro map, even though it has just as many
+connection as the smaller font Yurakucho has.
+
+Could put kind of springs that try to force connections into 45 degree
+turns? There might be opposing forces.

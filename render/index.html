@@ -1,6 +1,7 @@
 <html>
 <head>
-<script src="stop_locations.js"></script>
+<!--<script src="stop_locations.js"></script>-->
+<script src="sub.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 </head>
 <body>
@@ -12,6 +13,8 @@
 
 <script>
 
+var stop_locations = sub['stops'];
+
 function addLabel(x, y, text) {
 	$('#labels').append(
 		'<span style="font-size:10px;position:absolute;left:' + x + 'px;top:' + y + 'px;width:300px;">' + text + '</span>'
@@ -19,7 +22,7 @@ function addLabel(x, y, text) {
 }
 
 function line(ctx, x, y) {
-	ctx.lineWidth = 15;
+	ctx.lineWidth = 13;
 	ctx.lineCap = "round";
 	ctx.beginPath();
 	ctx.moveTo(x,y);
@@ -79,9 +82,8 @@ function scale_and_translate_stops(xy_stops) {
 	return xy_stops;
 }
 
-function show_stops(xy_stops) {
+function show_stops(stops) {
 	var ctx = document.getElementById("c").getContext('2d');
-	var stops = scale_and_translate_stops(xy_stops);
 	for (var stopname in stops) {
 		var stop = stops[stopname];
 		if (!stops.hasOwnProperty(stopname)) continue;
@@ -90,8 +92,39 @@ function show_stops(xy_stops) {
 	}
 }
 
+function show_lines(stops) {
+	var ctx = document.getElementById("c").getContext('2d');
+	var lines = sub['lines'];
+	
+	for (var line in lines) {
+		if (!lines.hasOwnProperty(line)) continue;
+		
+//		if (line !== "Yurakucho Line") continue;
+		
+		console.log(line);
+		for (var edge in lines[line]['edges']) {
+			if (!lines[line]['edges'].hasOwnProperty(edge)) continue;
+			var ab = lines[line]['edges'][edge];
+			var a = ab[0];
+			var b = ab[1];
+
+			ctx.save();
+			ctx.lineWidth = 5;
+			ctx.strokeStyle = lines[line]['color'];
+			ctx.lineCap = "round";
+			ctx.beginPath();
+			ctx.moveTo(stops[a].x, stops[a].y);
+			ctx.lineTo(stops[b].x, stops[b].y);
+			ctx.stroke();
+			ctx.restore();
+		}		
+	}
+}
+
 latlng_to_xy();
+stop_locations = scale_and_translate_stops(stop_locations);
 show_stops(stop_locations);
+show_lines(stop_locations);
 
 </script>
 </body>
