@@ -8,7 +8,7 @@
 
 <div style="position:relative">
 	<div id="labels" style="position:absolute;left:0;top:0;"></div>
-	<canvas id="c" width="1040" height="737" style="width:1040px;height:737px;border:solid 1px #cccccc;"/>
+	<canvas id="c" width="2080" height="1474" style="width:2080px;height:1474px;border:solid 1px #cccccc;"/>
 </div>
 
 <script>
@@ -61,10 +61,13 @@ function find_extents(xy_stops) {
 function compute_scale_and_translation(extents, xy_stops) {
 	var tx = -extents[0], ty = -extents[1];
 	
-	tx -= 0.34;
-	ty -= 0.24;
+//	tx -= 0.34;
+//	ty -= 0.24;
+	ty += 0.03;
+	tx += 0.005;
 	
-	return [2850, tx, ty];
+//	return [2850, tx, ty];
+	return [5700, tx, ty];
 	
 /*	extents[0] -= tx; extents[1] -= ty;
 	extents[2] -= tx; extents[3] -= ty;
@@ -99,7 +102,7 @@ function show_lines(stops) {
 	for (var line in lines) {
 		if (!lines.hasOwnProperty(line)) continue;
 		
-//		if (line !== "Yurakucho Line") continue;
+//		if (line !== "Shinjuku Line") continue;
 		
 		console.log(line);
 		for (var edge in lines[line]['edges']) {

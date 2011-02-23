@@ -16,10 +16,15 @@ def load_mapping():
 		m[end] = start
 	return m
 
+#print str(latlng("Ogawamachi"))
+#print str(latlng("ogawamachi station, tokyo, japan"))
+#exit()
+
 import time, sys
 mapping = load_mapping()
 uniq = open("unique_stops", "r").read().splitlines()
 #uniq = ["Suehirochou", "Sugamo-Shinden"]
+#uniq = ["Sakaechou"]
 
 for stop in uniq:
 	if stop.strip() == "": continue
@@ -39,4 +44,3 @@ for stop in uniq:
 
 	print "%s %s" % (coords, stop)
 
-#print str(latlng("Akabane-Iwabuchi Station"))
