@@ -1,7 +1,9 @@
+17.2.2011
+
 Just curious to see how much work it is to get the data that would allow
 this map to be created:
 
-http://speedymole.com/Tubes/Tokyo/tokyo-subway-map.gif
+tokyo-subway-map.gif
 
 First have a list of stops of each line. Lines might branch or loop,
 so all that the stop list means is that if stops come after each
@@ -12,14 +14,58 @@ that line.
 
 Actual metro map is not very much like reality at all. Metro map is
 more a visualization of the graph rather than a location mapping of it.
-All angles are always 45 degrees, even though in reality they can be
+Angles are always 45 degrees, even though in reality they can be
 anything. Sometimes directions are radically different to get the map
 to fit properly. Spaces between stations tend to be equal, even though
 in reality they change.
 
 Stations seem to have some kind of arbitrary importance to them. Tokyo
 station is more visible in the metro map, even though it has just as many
-connection as the smaller font Yurakucho has.
+connections as the smaller font Yurakucho has.
 
 Could put kind of springs that try to force connections into 45 degree
 turns? There might be opposing forces.
+
+---
+
+19.11.2015
+
+Get back into programming groove by looking at this project.
+
+Maybe I should do this for http://youinjapan.net/maps/osaka/kansai_jr_map.jpg
+kansai instead? I could try to make this into a cool widget like the ones on
+the homepage of the guy who made webcam toy.
+
+Now don't panic, this will take several days to make. No need to rush into it.
+
+Parts in this:
+
+ - Extracting the timetables for all lines
+  > They are going to be of the form "a train stops at S at time T"
+  > Just one day would be enough, say Monday
+  > On http://timetable.ekitan.com/train/TimeStation/16-30_D1.shtml you can see one stop along one line, clicking on the time shows the whole travel of the train
+ - Engine to figure out the position of each train at time t, given the JSON file of all
+ - Rendering, given 
+  > Symbolical vs. real-life location blending, 0 is symbolical and 1 is real world, with some nice ease-in ease-out (well that can be separate)
+  > Labels, different sizes and angles
+  > Spline for 
+   - How would you interpolate between two splines?
+   - Maybe both should have same amount of control points
+   - Does canvas have splines?
+    - Yes ctx.bezierCurveTo
+    -  context.lineCap = 'square';
+  > Square spline caps
+  > Oh shit, would also need to be able to know when given a bezier curve describing a train like to know.. coordinates of position p along the curve.
+   - Stops would described as "point p along line L"
+   - Maybe can copy the math from http://stackoverflow.com/questions/4058979/find-a-point-a-given-distance-along-a-simple-cubic-bezier-curve-on-an-iphone
+   ? But some lines branch
+  + Would be incredibly cool if the elevation of each station was included
+  ? How would you fit the whole line map on the screen, would there be scrolling?
+
+ - UI for scrobbing the time and switching between 
+ - Some kind of data file to describe the shapes of all the lines
+
+OK what's going to be the "ugh" point in this project?
+ - Getting all the line data will involve data entry, which is probably easier to do by hand than to try to automate
+ - Some info for what initially might seem like a different train may actually map to the same train, which is only looping
+ - Representing a whole line as several connected bezier curves and then finding a position along the whole track might be challenging math-wise
