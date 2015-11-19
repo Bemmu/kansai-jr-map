@@ -47,6 +47,7 @@ Parts in this:
  - Engine to figure out the position of each train at time t, given the JSON file of all
  - Rendering, given 
   > Symbolical vs. real-life location blending, 0 is symbolical and 1 is real world, with some nice ease-in ease-out (well that can be separate)
+   - Note that in real-life many stops will map in one spot, but in symbolical the stops are laid next to each other instead
   > Labels, different sizes and angles
   > Spline for 
    - How would you interpolate between two splines?
@@ -69,3 +70,18 @@ OK what's going to be the "ugh" point in this project?
  - Getting all the line data will involve data entry, which is probably easier to do by hand than to try to automate
  - Some info for what initially might seem like a different train may actually map to the same train, which is only looping
  - Representing a whole line as several connected bezier curves and then finding a position along the whole track might be challenging math-wise
+
+ Maybe it should be more like 
+
+ {
+    'takarazuka' : {
+      'train_1' : {'10:31' : 'Osaka', '10:35' : 'Kyoto' ...},
+      'train_2' : {'10:41' : 'Osaka', '10:45' : 'Kyoto' ...},
+      ...
+    }
+    'some_other_line' : {
+      ...
+    }
+ }
+
+Can a train hop from one line to another?
