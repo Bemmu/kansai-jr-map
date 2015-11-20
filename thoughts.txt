@@ -85,3 +85,56 @@ OK what's going to be the "ugh" point in this project?
  }
 
 Can a train hop from one line to another?
+
+20.11.2015
+
+I wonder if there is a way to show a point along a curve using SVG?
+
+Realized that if in a loop line the start and end points don't overlap, then showing the train looping around from end back to start will have it float in midair. Or else it will just teleport back.
+
+In SVG, you have a path.
+
+<path
+       style="fill:none;stroke:#7babdb;stroke-width:40.46795654px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 47.337827,45.94269 C 290.55995,334.25948 233.09383,285.14959 486.67212,289.88758 660.19791,293.12906 692.53424,265.95645 692.53424,265.95645"
+       id="path2985"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="csc" />
+
+Is there a way, from within JavaScript, to query a point within this path?
+
+Maybe someone has solved this already. Maybe there exists some kind of library to interact with SVG from JS.
+
+"Utility method Find dot coordinates on the given cubic bezier curve at the given t.
+Raphael.findDotsAtSegment(p1x, p1y, c1x, c1y, c2x, c2y, p2x, p2y, t)"
+
+Is the SVG path I have made of "cubic bezier curves"?
+
+"Utility method Converts path to a new path where all segments are cubic bezier curves
+Raphael.path2curve(pathString)"
+
+OK cool, so if I have a path string I can first turn it into cubic bezier segments.
+
+As a test I converted "M 47.337827,45.94269 C 290.55995,334.25948 233.09383,285.14959 486.67212,289.88758 660.19791,293.12906 692.53424,265.95645 692.53424,265.95645" and the result was an array where each element is a sub-array:
+
+[['M', 47.337827, 45.94269],
+ ['C', 290.55995, ... , 289.88758], (each had 6 numbers)
+ ['C', 660.19791, ... , 265.95645]]
+
+There are 6 numbers here, but findDotsAtSegment takes 8?
+
+This article has a pretty good picture that probably explains it "Stitching curves together":
+http://devmag.org.za/2011/04/05/bzier-curves-a-tutorial/
+
+Also, if I have a big path some curves will be a lot shorter. To find a point along the total curve, would need to take into account the lengths of each subsegment.
+
+---
+
+Vector3 CalculateBezierPoint(float t,
+  Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+http://devmag.org.za/2011/04/05/bzier-curves-a-tutorial/
+
+One strategy that should work:
+ - Turn the whole path into line segments first
+ - Interpolating line segments is then straightforward
+ - Can still draw the actual curve as a curve to get best outcome
