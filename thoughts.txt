@@ -185,5 +185,27 @@ Realization: Some trains can be on a line, but they would not be listed as stopp
 
 ---
 
-Just to make some progress, write a parser to find the adjacent stops?
+Just to make some progress, write a parser to find the adjacent stops? Got it.
 
+Now... can I find all the stations by just doing some graph exploration?
+
+Something like...
+
+Get the first unexplored station ID.
+Find all the station IDs from there.
+If station ID was unknown then add it to exploration list.
+
+OK this seems to work.
+
+30.11.2015
+
+Each page has a point but it is in some strange coordinate space.
+However there is a utility to do conversion, so could convert all afterwards.
+var p = new PointConverter(12491880, 48779780, "wgs");
+
+Before spidering all should extract that and other possible information.
+Also since this seems to cover all of Japan, maybe should just get whole Japan info?
+
+The biggest thing besides that is line names and membership like which lines are on which stations.
+
+Could maybe somehow determine line ordering as well?

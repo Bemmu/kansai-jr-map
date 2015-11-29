@@ -38,8 +38,39 @@ def station(id):
 			'next_station' : prev_next_stations[1]
 		})
 
-	return lines
+	return soup.find('h1').text, lines
 
-for s in station("5006"):
-	print s["prev_station"]["name"], s["line_name"], s["next_station"]["name"]
+unexplored_station_ids = ["5006"]
+explored_stations = {}
+stations = {}
+
+while unexplored_station_ids:
+	station_id = unexplored_station_ids.pop()
+	try:
+		name, lines = station(station_id)
+		explored_stations[station_id] = name
+		print name
+	except Exception, e:
+		print e
+		print "While trying to get %s" % station_id
+
+	for line in lines:
+		ids = [line["prev_station"]["id"], line["next_station"]["id"]]
+		print ids
+		for i in ids:
+			if i is None:
+				continue
+
+			if not i in explored_stations:
+				unexplored_station_ids.append(i)
+
+print explored_stations
+
+# for s in station("5006"):
+# 	if s["prev_station"]["id"] 
+
+# 	stations 
+
+
+# 	print s["prev_station"]["name"], s["line_name"], s["next_station"]["name"]
 
