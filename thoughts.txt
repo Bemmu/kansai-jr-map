@@ -138,3 +138,52 @@ One strategy that should work:
  - Turn the whole path into line segments first
  - Interpolating line segments is then straightforward
  - Can still draw the actual curve as a curve to get best outcome
+
+---
+
+29.11.2015
+
+http://mta.me/
+
+JＲ東海道本線 米原方面
+
+Train that leaves from osaka and arrives in 新大阪 at 05:03 and leaves from 新大阪 at 05:04 is at url:
+http://timetable.ekitan.com/train/OneTrainTimetable?SFCODE=5006&SFNAME=%91%E5%8D%E3&HOUR=05&MIN=00&TXKEY=500310-13602-502B&DW=2
+
+And if I go to 新大阪 and check the time table?
+Then there it says 05:04, so the table is based on departure time.
+And clicking there the url is 
+http://timetable.ekitan.com/train/OneTrainTimetable?SFCODE=5429&SFNAME=%90V%91%E5%8D%E3&HOUR=05&MIN=04&TXKEY=500310-13602-502B&DW=2
+
+So TXKEY is the train?
+500310-13602-502B
+
+Check another train going to somewhere else...
+Yeah that's different.
+How about another train but on the same line going same way?
+
+Here is one train in the loop line:
+http://timetable.ekitan.com/train/OneTrainTimetable?SFCODE=5006&SFNAME=%91%E5%8D%E3&HOUR=04&MIN=55&TXKEY=720100-44616-1302&DW=2
+
+After it loops over, is the TXKEY still the same?
+05:39 大阪発天王寺行き
+
+This round it is 
+http://timetable.ekitan.com/train/OneTrainTimetable?SFCODE=5006&SFNAME=%91%E5%8D%E3&HOUR=05&MIN=39&TXKEY=720100-1201-1312&DW=2
+
+What about the round after that, starting at 06:24?
+http://timetable.ekitan.com/train/OneTrainTimetable?SFCODE=5006&SFNAME=%91%E5%8D%E3&HOUR=06&MIN=24&TXKEY=720100-1286-1330&DW=2
+
+So seems for the same train the first part is the same.
+
+Probably every station is connected in graph, so could just explore out.
+
+Ah, SFCODE seems to be station code. For example Osaka is:
+http://ekitan.com/station/EnsenList?SFCODE=5006
+
+Realization: Some trains can be on a line, but they would not be listed as stopping at a line they go through if it's a rapid train.
+
+---
+
+Just to make some progress, write a parser to find the adjacent stops?
+
