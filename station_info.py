@@ -18,7 +18,7 @@ def station(id):
 	# Now each <tr> describes a line
 	lines = []
 	for tr in table.findAll('tr'):	
-		line = tr.find('td', {"class" : "line"}, recursive = False).text.encode('utf-8')
+		line_name = tr.find('td', {"class" : "line"}, recursive = False).text.encode('utf-8')
 
 		# Find previous and next station in tds based on their class names
 		prev_next_stations = []
@@ -33,8 +33,8 @@ def station(id):
 			prev_next_stations.append({'id' : station_id, 'name' : station_name})
 
 		lines.append({
+			'line_name' : line_name,
 			'prev_station' : prev_next_stations[0],
-			'line_name' : line,
 			'next_station' : prev_next_stations[1]
 		})
 

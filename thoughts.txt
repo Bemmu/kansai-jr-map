@@ -197,7 +197,7 @@ If station ID was unknown then add it to exploration list.
 
 OK this seems to work.
 
-30.11.2015
+---
 
 Each page has a point but it is in some strange coordinate space.
 However there is a utility to do conversion, so could convert all afterwards.
@@ -209,3 +209,75 @@ Also since this seems to cover all of Japan, maybe should just get whole Japan i
 The biggest thing besides that is line names and membership like which lines are on which stations.
 
 Could maybe somehow determine line ordering as well?
+
+30.11.2015
+
+Yeah I it's enough to know "this stop is connected to this one".
+
+Now what's a good way to represent a graph in Python? I'll eventually want to export it to JSON...
+
+This would be a station-oriented way:
+
+{
+  '1234' : {
+   'name' : 'shinosaka',
+   'lat' : ...,
+   'lon' : ...,
+   'lines' : {
+    'someline' : {
+      'next' : '2345',
+      'prev' : None
+    },
+    'someotherline' : {
+      'next' : '3456',
+      'prev' : '6543'
+    }
+   }
+  }
+}
+
+Well seems like that contains all the necessary data.
+Maybe for lines should use some line ID instead of line name, maybe there is some line with same name elsewhere in Japan?
+
+What about branching lines? There isn't necessarily strictly one prev or next stop right?
+Let's see an example...
+
+01.12.2015
+
+OK back to trying to find an example of a branching line.
+
+Sakurai line.
+
+Turns out train lines aren't strictly "lines". More like trees.
+
+Sakurai line branches at Takada. So what would ekitan say is the "previous" stop of Sakurai line at Takada if there are several?
+
+Actually Takada is also an example of a station of which there are many of the same name in Japan.
+
+Maybe it will work itself out if I'm just able to 
+"Show a train going from station A to station B" where A and B are stations next to each other.
+
+Thoughts while swimming:
+ - There is actually a displayable map, then there is another one which has all the splines defining paths along which to display the trains moving
+ - It's not enough to say "show train going from A to B", because there may be several visual locations for A and B and paths, so it's actually
+   "show train going from A to B along line X"
+ - Because "lines" can actually split, it might be easiest to have each "sub-line" separately as far as movement is concerned
+
+ So if there's a "line" like this:
+
+           ____B
+          /
+  A-------
+          \____C
+
+ Should store navigation lines
+
+           ____B
+          /
+  A-------
+
+ AND
+
+  A-------
+          \____C
+
