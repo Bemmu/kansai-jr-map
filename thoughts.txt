@@ -281,3 +281,18 @@ Thoughts while swimming:
   A-------
           \____C
 
+
+03.12.2015
+
+Write exporter for train lines.
+
+But first need to fix the "sakurai line issue".
+
+What does it mean that Sakurai line goes from Nara to Takada
+"Through service on the Wakayama Line to Ōji and Gojō"
+
+What is "through service"?
+"a through train is one which may be used by a passenger to make their entire journey without changing trains."
+
+I feel like giving up. Shit's complicated.
+
