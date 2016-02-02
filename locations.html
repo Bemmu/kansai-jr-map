@@ -1,0 +1,105 @@
+<body>
+Yep.
+<script>
+var trains = {
+  'bob' : [
+  {
+    'station' : 0,
+    'departure' : '2:00',
+  },
+  {
+    'arrival' : '3:43',
+    'station' : 1,
+    'departure' : '3:44',
+  },
+  {
+    'arrival' : '3:50',
+    'station' : 2,
+    'departure' : '3:51'
+  },
+  {
+    'arrival' : '14:00',
+    'station' : 3
+  }]
+}
+
+/*
+ 00:01 -> 60
+ 01:00 -> 60*60
+ 00:01:00 -> 60
+ 00:00:15 -> 15
+ 01:00:00 -> 60*60
+ 13:02:03 -> 60*60*13 + 60*2 + 3
+*/
+function stringTimeToSecondsSinceMidnight(str) {
+  var parts = str.split(":");
+  if (parts.length === 2) {
+    return parts[0] * 3600 + parts[1] * 60;
+  }
+  if (parts.length === 3) {
+    return parts[0] * 3600 + parts[1] * 60 + parts[2] * 1;
+  }
+  throw "Strange time " + str; 
+}
+
+// Inverse of stringTimeToSecondsSinceMidnight
+function secondsSinceMidnightToStringTime(s) {
+  var hours = Math.floor(s/3600);
+  var minutes = Math.floor((s - hours * 3600)/60);
+  var seconds = Math.floor((s - hours * 3600 - minutes * 60));
+  if (seconds === 0) {
+    return hours + ":" + minutes;
+  } else {
+    return hours + ":" + minutes + ":" + seconds;
+  }
+}
+
+function trainLocation(trainName, timeStr) { 
+  var t = stringTimeToSecondsSinceMidnight(timeStr);
+  console.log("Current time is " + t + " (" + timeStr + ")");
+
+  // Find the interval the train is in.
+  var schedule = trains[trainName];
+  for (var i in schedule) {
+    i = i*1;
+    var item = schedule[i];
+
+    if (item.arrival === undefined) {
+      var dep = stringTimeToSecondsSinceMidnight(item.departure);
+
+      // If there is no arrival, then if departure is later than now, 
+      // this is the schedule item we are looking for.
+      if (t < dep) {
+        console.log(trainName, 'is waiting until first', item.departure, 'departure of the day at station', item.station);
+        return;
+      }
+    }
+
+    // Maybe the train is between two stations?
+    if (item.departure !== undefined && schedule[i+1] !== undefined && schedule[i+1].arrival !== undefined) {
+      var dep = stringTimeToSecondsSinceMidnight(item.departure);
+      var arr = stringTimeToSecondsSinceMidnight(schedule[i+1].arrival);
+      if (dep < t && t < arr) {
+        console.log(trainName, 'is between stations', item.station, 'and', schedule[i+1].station);
+        return;
+      }
+    }
+
+    if (item.departure === undefined) {
+      var arr = stringTimeToSecondsSinceMidnight(item.arrival);
+      if (t > arr) {
+        console.log(trainName, 'has stopped for the day at station', item.station);
+      }
+    }
+  }
+}
+
+function locations(time) { 
+  for (var trainName in trains) {
+    trainLocation(trainName, time);
+  }
+}
+
+locations('15:05');
+</script>
+</body>

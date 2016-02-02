@@ -296,3 +296,58 @@ What is "through service"?
 
 I feel like giving up. Shit's complicated.
 
+05.12.2015
+
+Data structure I need for this is basically a grid, right?
+
+Train
+1 : [(station_number, time), (station_number, time)],
+2 : ...
+3
+4
+5
+
+And for stations:
+
+Station
+100 : (line, t),      <-- t = 0 being the first point on the line, t = 1 being the last
+101 : (line, t) 
+
+
+Lines:
+
+
+Maybe it's imperfect, but go with that.
+
+So now need to export this from Ekitan. But not for every station, only for the stations in the map I'm using as basis.
+So should find a list of all the stations in my map. If I have a list of every line in the map, then I can step through
+it to find the station codes.
+
+OK, list the lines here:
+
+JR Tōzai Line (JR東西線), Kyobashi (京橋) to Amagasaki (尼崎), what is the number of this line?
+
+To keep things simple, should probably keep them all as bézier curves.
+Can I associate some notes in the SVG that could then be exported?
+
+02.02.2016
+
+Today I feel like doing the part where you have a list of each train and what stop they are
+supposed to be in, without taking a stand on any spline stuff.
+
+So I'll have a list of trains like
+
+It means that train "bob" arrives at station 1 at 3:43 and leaves at 3:44.
+
+Then you should be able to tell this system:
+"The time is now 3:50:32, where are all the trains?"
+
+And it would tell you
+"Bob is waiting for departure at station 2"
+
+Or another example
+"The time is now 3:47:00, where are all the trains?"
+
+And it would tell you
+"Bob is 50% between station 1 and station 2"
+
