@@ -64,11 +64,9 @@ function trainLocation(trainName, timeStr) {
     i = i*1;
     var item = schedule[i];
 
+    // Maybe the train is waiting for its first departure of the day?
     if (item.arrival === undefined) {
       var dep = stringTimeToSecondsSinceMidnight(item.departure);
-
-      // If there is no arrival, then if departure is later than now, 
-      // this is the schedule item we are looking for.
       if (t < dep) {
         console.log(trainName, 'is waiting until first', item.departure, 'departure of the day at station', item.station);
         return;
@@ -85,10 +83,20 @@ function trainLocation(trainName, timeStr) {
       }
     }
 
+    // Maybe done for the day?
     if (item.departure === undefined) {
       var arr = stringTimeToSecondsSinceMidnight(item.arrival);
       if (t > arr) {
         console.log(trainName, 'has stopped for the day at station', item.station);
+      }
+    }
+
+    // Maybe it has arrived at the station, but waiting to depart?
+    if (item.arrival !== undefined && item.departure !== undefined) {
+      var arr = stringTimeToSecondsSinceMidnight(item.arrival);
+      var dep = stringTimeToSecondsSinceMidnight(item.departure);
+      if (arr <= t && t <= dep) {
+        console.log(trainName, 'is waiting for passengers at station', item.station);
       }
     }
   }
@@ -100,6 +108,6 @@ function locations(time) {
   }
 }
 
-locations('15:05');
+locations('3:51:30');
 </script>
 </body>
