@@ -351,3 +351,6 @@ Or another example
 And it would tell you
 "Bob is 50% between station 1 and station 2"
 
+...
+
+Stuck trying to make blending function.

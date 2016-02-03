@@ -1,5 +1,5 @@
 <body>
-Yep.
+  <canvas id="canvas" width="1000" height="500"></canvas>
 <script>
 var trains = {
   'bob' : [
@@ -56,7 +56,6 @@ function secondsSinceMidnightToStringTime(s) {
 
 function trainLocation(trainName, timeStr) { 
   var t = stringTimeToSecondsSinceMidnight(timeStr);
-  console.log("Current time is " + t + " (" + timeStr + ")");
 
   // Find the interval the train is in.
   var schedule = trains[trainName];
@@ -67,7 +66,7 @@ function trainLocation(trainName, timeStr) {
     // Maybe the train is waiting for its first departure of the day?
     if (item.arrival === undefined) {
       var dep = stringTimeToSecondsSinceMidnight(item.departure);
-      if (t < dep) {
+      if (t <= dep) {
         console.log(trainName, 'is waiting until first', item.departure, 'departure of the day at station', item.station);
         return;
       }
@@ -78,7 +77,19 @@ function trainLocation(trainName, timeStr) {
       var dep = stringTimeToSecondsSinceMidnight(item.departure);
       var arr = stringTimeToSecondsSinceMidnight(schedule[i+1].arrival);
       if (dep < t && t < arr) {
-        console.log(trainName, 'is between stations', item.station, 'and', schedule[i+1].station);
+
+        // Lerp from one station to the next
+        var progress = (t-dep)/(arr-dep);
+
+        // However trains don't have infinite acceleration, so ease-in-out the train.
+        // Assume a train takes 10 seconds to accelerate to full speed and decelerate.
+        var mappedProgress = accelDeaccel(arr-dep, t-dep);
+
+
+        var percent = Math.round(mappedProgress*10000)*0.01;
+
+
+        console.log(trainName, 'is ' + percent + '% between stations', item.station, 'and', schedule[i+1].station);
         return;
       }
     }
@@ -86,7 +97,7 @@ function trainLocation(trainName, timeStr) {
     // Maybe done for the day?
     if (item.departure === undefined) {
       var arr = stringTimeToSecondsSinceMidnight(item.arrival);
-      if (t > arr) {
+      if (t >= arr) {
         console.log(trainName, 'has stopped for the day at station', item.station);
       }
     }
@@ -108,6 +119,90 @@ function locations(time) {
   }
 }
 
-locations('3:51:30');
+//locations('2:00');
+
+function secondsIntoTripToTripPercentage(totalSeconds, currentSeconds) { 
+  var secondsToAccelerate = 150;
+  if (currentSeconds < secondsToAccelerate) {
+    return (Math.pow(currentSeconds/secondsToAccelerate, 2) * secondsToAccelerate) / totalSeconds;
+  } else if (currentSeconds > totalSeconds - secondsToAccelerate) {
+    var inv = (totalSeconds - currentSeconds)/secondsToAccelerate;
+    return 1 - Math.pow(inv, 2) / totalSeconds * secondsToAccelerate;
+//    return Math.pow(inv, 2);
+    // return 1 - Math.pow(inv, 2) * secondsToAccelerate;
+    return 0.5;
+//    return secondsToAccelerate-Math.pow((1-x/secondsToAccelerate), 2)*secondsToAccelerate;*/
+  } else {
+    return currentSeconds / totalSeconds;
+  }
+};
+
+function secondsIntoTripToTripPercentage(totalSeconds, currentSeconds) { 
+  var secondsToAccelerate = 300;
+  var curvy = (Math.pow(currentSeconds/secondsToAccelerate, 2) * secondsToAccelerate) / totalSeconds;
+  var inv = (totalSeconds - currentSeconds)/secondsToAccelerate;
+  var curvy2 = 1 - Math.pow(inv, 2) / totalSeconds * secondsToAccelerate;
+  var blend = currentSeconds / totalSeconds;
+  var straight = currentSeconds / totalSeconds;
+
+
+  // return curvy * (1 - blend);// * (1-blend) + curvy2 * (blend);
+  var a = straight * (1-Math.sqrt(blend)) + curvy2 * (Math.sqrt(blend));
+  var b = straight * Math.sqrt(blend) + curvy * (1-Math.sqrt(blend));
+  return b;
+
+
+  if (currentSeconds < secondsToAccelerate) {
+    var curvy = (Math.pow(currentSeconds/secondsToAccelerate, 2) * secondsToAccelerate) / totalSeconds;
+    var straight = currentSeconds / totalSeconds;
+    var blend = Math.min(currentSeconds, secondsToAccelerate)/secondsToAccelerate;
+    return straight * blend + curvy * (1-blend);
+  } else if (currentSeconds > totalSeconds - secondsToAccelerate) {
+    var inv = (totalSeconds - currentSeconds)/secondsToAccelerate;
+    var straight = currentSeconds / totalSeconds;
+    var curvy = 1 - Math.pow(inv, 2) / totalSeconds * secondsToAccelerate;
+    var blend = (Math.min(currentSeconds - totalSeconds + secondsToAccelerate, secondsToAccelerate))/secondsToAccelerate;
+
+    return straight * (1-blend) + curvy * (blend);
+//    return Math.pow(inv, 2);
+    // return 1 - Math.pow(inv, 2) * secondsToAccelerate;
+    return 0.5;
+//    return secondsToAccelerate-Math.pow((1-x/secondsToAccelerate), 2)*secondsToAccelerate;*/
+  } else {
+    return currentSeconds / totalSeconds;
+  }
+};
+
+// function secondsIntoTripToTripPercentage(totalSeconds, currentSeconds) { 
+//   return currentSeconds/totalSeconds;
+// }
+
+function draw() {
+  var canvas = document.getElementById("canvas");
+  var ctx = canvas.getContext('2d');
+  ctx.fillStyle = 'rgb(0,0,0)';
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+  ctx.beginPath();
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgb(255,255,255)';
+  for (var i=0;i<ctx.canvas.width;i++) {
+    var y = secondsIntoTripToTripPercentage(ctx.canvas.width, i) * ctx.canvas.height;
+
+//    var y = ctx.canvas.height - i/ctx.canvas.width*ctx.canvas.height;
+
+
+
+    if (i == 0) {
+     ctx.moveTo(i, y);
+    } else {
+     ctx.lineTo(i, y);
+    }
+  }
+  ctx.stroke();
+}
+
+draw();
+
+
 </script>
 </body>
